@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: backend
+  datasource:
+    url: jdbc:mysql://localhost:3307/trip_mate
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: zxzx!203
+  jpa:
+    properties:
+      hibernate:
+        show-sql: true
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+
+jwt:
+  secret: a031f289231569e9f2e58318abb2752b09d21cbcebef7d9aa4ca0e5e54db7b03
+  expiration: 3600000 # 1시간 (밀리세컨드)

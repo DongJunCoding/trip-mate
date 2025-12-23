@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### Spring Boot config ###
-application.yaml
+src/main/resources/application.yaml

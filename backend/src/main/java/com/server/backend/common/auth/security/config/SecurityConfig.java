@@ -1,6 +1,8 @@
 package com.server.backend.common.auth.security.config;
 
+import com.server.backend.common.auth.jwt.filter.JWTFilter;
 import com.server.backend.common.auth.jwt.filter.LoginFilter;
+import com.server.backend.common.auth.jwt.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +25,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final JWTUtil jwtUtil;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -62,6 +65,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/app/test/sys").hasAnyRole("SYS")
                         .requestMatchers("/api/v1/app/test/user").hasAnyRole("USER", "SYS")
                         .anyRequest().permitAll());
+
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);

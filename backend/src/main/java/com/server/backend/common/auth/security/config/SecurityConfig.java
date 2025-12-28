@@ -63,7 +63,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/app/test/sys").hasAnyRole("SYS")
-                        .requestMatchers("/api/v1/app/test/user").hasAnyRole("USER", "SYS")
+                        .requestMatchers("/api/v1/app/test/user").hasAnyRole("USER")
                         .anyRequest().permitAll());
 
         http

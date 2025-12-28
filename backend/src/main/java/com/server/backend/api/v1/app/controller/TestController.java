@@ -22,7 +22,5 @@ public class TestController {
     public void user() {
         log.info("## User Controller");
         log.info("user 유저");
-
-        System.out.println("commit test");
     }
 }

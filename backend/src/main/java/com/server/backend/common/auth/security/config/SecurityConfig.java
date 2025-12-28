@@ -66,8 +66,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/app/test/user").hasAnyRole("USER", "SYS")
                         .anyRequest().permitAll());
 
-//        http
-//                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);

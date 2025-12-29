@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.server.backend.common.auth.dto.UserDTO;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
 import com.server.backend.common.auth.security.auth.CustomUserDetails;
+import com.server.backend.common.data.entity.UserTokenEntity;
+import com.server.backend.common.data.repository.UserTokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -21,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 @Slf4j
@@ -29,10 +32,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final UserTokenRepository userTokenRepository;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        log.info("## attemptAuthentication");
+        log.info("## LoginFilter attemptAuthentication");
         try {
             ObjectMapper mapper = new ObjectMapper();
             UserDTO userDTO = mapper.readValue(request.getInputStream(), UserDTO.class);
@@ -48,7 +52,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     // 여기서 access / refresh token을 발급한다.
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        log.info("## successfulAuthentication");
+        log.info("## LoginFilter successfulAuthentication");
 
         // 유저 정보
         String username = authResult.getName();
@@ -63,19 +67,36 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String accessToken = jwtUtil.createJwt("access", username, role, 600000L);
         String refreshToken = jwtUtil.createJwt("refresh", username, role, 86400000L);
 
+        // refresh token 저장
+        addRefreshEntity(username, refreshToken, 86400000L);
+
         // 응답설정, HTTP 인증 방식은 RFC 7235 정의에 따라 아래와 같이 인증 헤더 형태를 가져야 한다.
-        response.setHeader("access", accessToken);
+        response.setHeader("Authorization", "Bearer " + accessToken);
         response.addCookie(createCookie("refresh", refreshToken));
         response.setStatus(HttpStatus.OK.value());
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        log.info("unsuccessfulAuthentication");
+        log.info("## LoginFilter unsuccessfulAuthentication");
         response.setStatus(401);
     }
 
+    private void addRefreshEntity(String username, String refresh, Long expiredMs) {
+        log.info("## LoginFilter addRefreshEntity");
+
+        Date date = new Date(System.currentTimeMillis() + expiredMs);
+
+        UserTokenEntity userTokenEntity = new UserTokenEntity();
+        userTokenEntity.setUserId(username);
+        userTokenEntity.setRefreshToken(refresh);
+        userTokenEntity.setExpiration(date.toString());
+
+        userTokenRepository.save(userTokenEntity);
+    }
+
     private Cookie createCookie(String key, String value) {
+        log.info("## LoginFilter createCookie");
 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);

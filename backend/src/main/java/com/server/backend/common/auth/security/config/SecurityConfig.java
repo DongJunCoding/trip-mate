@@ -3,6 +3,7 @@ package com.server.backend.common.auth.security.config;
 import com.server.backend.common.auth.jwt.filter.JWTFilter;
 import com.server.backend.common.auth.jwt.filter.LoginFilter;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
+import com.server.backend.common.data.repository.UserTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final UserTokenRepository userTokenRepository;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -70,7 +72,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, userTokenRepository), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

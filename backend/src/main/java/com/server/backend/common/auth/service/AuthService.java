@@ -1,11 +1,18 @@
 package com.server.backend.common.auth.service;
 
 import com.server.backend.common.auth.dto.UserDTO;
+import com.server.backend.common.auth.jwt.util.JWTUtil;
 import com.server.backend.common.data.entity.UserEntity;
 import com.server.backend.common.data.repository.UserRepository;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +21,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private final JWTUtil jwtUtil;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -30,6 +38,49 @@ public class AuthService {
                         .nickname(userDTO.getNickname())
                         .build()
         );
+    }
 
+    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+
+        // get refresh token
+        String refresh = null;
+        Cookie[] cookies = request.getCookies();
+        for(Cookie cookie : cookies) {
+            if(cookie.getName().equals("refresh")) {
+                refresh = cookie.getValue();
+            }
+        }
+
+        if(refresh == null) {
+            // response status code
+            return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST);
+
+        }
+
+        // expired check
+        try{
+            jwtUtil.isExpired(refresh);
+        } catch (ExpiredJwtException e) {
+            return new ResponseEntity<>("refresh token expired", HttpStatus.BAD_REQUEST);
+        }
+
+        // 토큰이 refresh인지 확인(발급시 페이로드에 명시)
+        String category = jwtUtil.getCategory(refresh);
+
+        if(!category.equals("refresh")) {
+            // response status code
+            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
+        }
+
+        String username = jwtUtil.getUsername(refresh);
+        String role = jwtUtil.getRole(refresh);
+
+        // make new JWT
+        String newAccess = jwtUtil.createJwt("access", username, role, 6000000L);
+
+        // response
+        response.setHeader("access", newAccess);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

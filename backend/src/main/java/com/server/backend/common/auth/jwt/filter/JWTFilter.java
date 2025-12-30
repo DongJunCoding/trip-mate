@@ -3,6 +3,7 @@ package com.server.backend.common.auth.jwt.filter;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
 import com.server.backend.common.auth.security.auth.CustomUserDetails;
 import com.server.backend.common.data.entity.UserEntity;
+import com.server.backend.common.data.enums.UserRoleType;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -84,7 +85,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         UserEntity userEntity = new UserEntity();
         userEntity.setUserId(username);
-        userEntity.setUserRole(role);
+        userEntity.setUserRole(UserRoleType.ROLE_USER); // TODO 각 사용자별 권한이 들어가도록 처리해야함
 
         // UserDetails에 회원 정보 객체 담기
         CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);

@@ -4,6 +4,7 @@ import com.server.backend.common.auth.dto.UserDTO;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
 import com.server.backend.common.data.entity.UserEntity;
 import com.server.backend.common.data.entity.UserTokenEntity;
+import com.server.backend.common.data.enums.UserRoleType;
 import com.server.backend.common.data.repository.UserRepository;
 import com.server.backend.common.data.repository.UserTokenRepository;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -39,7 +40,7 @@ public class AuthService {
                         .userId(userDTO.getUserId())
                         .userPw(bCryptPasswordEncoder.encode(userDTO.getUserPw()))
                         .userEmail(userDTO.getUserEmail())
-                        .userRole(userDTO.getUserRole())
+                        .userRole(UserRoleType.ROLE_USER)
                         .nickname(userDTO.getNickname())
                         .build()
         );

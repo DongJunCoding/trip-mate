@@ -19,7 +19,7 @@ public class CustomUserDetails implements UserDetails {
         collect.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return user.getUserRole();
+                return user.getUserRole().name();
             }
         });
         return collect;

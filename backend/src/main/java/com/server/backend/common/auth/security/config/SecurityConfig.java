@@ -1,5 +1,6 @@
 package com.server.backend.common.auth.security.config;
 
+import com.server.backend.common.auth.jwt.filter.CustomLogoutFilter;
 import com.server.backend.common.auth.jwt.filter.JWTFilter;
 import com.server.backend.common.auth.jwt.filter.LoginFilter;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
@@ -16,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -73,6 +75,9 @@ public class SecurityConfig {
 
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, userTokenRepository), UsernamePasswordAuthenticationFilter.class);
+
+        http
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, userTokenRepository), LogoutFilter.class);
 
         return http.build();
     }

@@ -3,7 +3,6 @@ package com.server.backend.common.auth.jwt.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.server.backend.common.auth.dto.UserDTO;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
-import com.server.backend.common.auth.security.auth.CustomUserDetails;
 import com.server.backend.common.data.entity.UserTokenEntity;
 import com.server.backend.common.data.repository.UserTokenRepository;
 import jakarta.servlet.FilterChain;

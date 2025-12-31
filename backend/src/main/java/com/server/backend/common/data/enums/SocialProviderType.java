@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum SocialProviderType {
 
+    LOCAL("자체"),
     NAVER("네이버"),
     GOOGLE("구글"),
     KAKAO("카카오");

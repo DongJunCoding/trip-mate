@@ -4,6 +4,7 @@ import com.server.backend.common.auth.dto.UserDTO;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
 import com.server.backend.common.data.entity.UserEntity;
 import com.server.backend.common.data.entity.UserTokenEntity;
+import com.server.backend.common.data.enums.SocialProviderType;
 import com.server.backend.common.data.enums.UserRoleType;
 import com.server.backend.common.data.repository.UserRepository;
 import com.server.backend.common.data.repository.UserTokenRepository;
@@ -42,6 +43,9 @@ public class AuthService {
                         .userEmail(userDTO.getUserEmail())
                         .userRole(UserRoleType.ROLE_USER)
                         .nickname(userDTO.getNickname())
+                        .isLock(false) // 임시
+                        .isSocial(false) // 임시
+                        .socialProviderType(SocialProviderType.LOCAL) // 임시
                         .build()
         );
     }

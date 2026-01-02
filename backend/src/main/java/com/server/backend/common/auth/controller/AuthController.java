@@ -23,12 +23,10 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     @PostMapping(value = "/signup")
-    public ResponseEntity<UserDTO> signUp(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> signUp(@RequestBody UserDTO userDTO) {
         log.info("## Auth Sign Up Controller");
 
-        authService.signUp(userDTO);
-
-        return null;
+        return authService.signUp(userDTO);
     }
 
     @PostMapping(value = "/reissue")

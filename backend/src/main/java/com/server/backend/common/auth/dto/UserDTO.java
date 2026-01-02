@@ -1,5 +1,6 @@
 package com.server.backend.common.auth.dto;
 
+import com.server.backend.common.data.enums.SocialProviderType;
 import lombok.*;
 
 @Data
@@ -14,4 +15,7 @@ public class UserDTO {
     private String userEmail; // 이메일
     private String userRole; // 권한
     private String nickname; // 닉네임
+    private Boolean isLock; // 계정 Lock 구분
+    private Boolean isSocial; // 소셜 계정 구분
+    private SocialProviderType socialProviderType; // 소셜 계정 타입
 }

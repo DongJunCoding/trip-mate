@@ -1,5 +1,6 @@
 package com.server.backend.common.data.entity;
 
+import com.server.backend.common.auth.dto.UserDTO;
 import com.server.backend.common.base.entity.BaseEntity;
 import com.server.backend.common.data.enums.SocialProviderType;
 import com.server.backend.common.data.enums.UserRoleType;
@@ -9,7 +10,6 @@ import lombok.*;
 @Entity
 @Table(name = "user")
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,4 +30,9 @@ public class UserEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SocialProviderType socialProviderType; // 소셜 계정 타입
 
+    public void updateUser(UserDTO userDTO) {
+        if(userDTO.getUserPw() != null) this.userPw = userDTO.getUserPw();
+        if(userDTO.getUserEmail() != null) this.userEmail = userDTO.getUserEmail();
+        if(userDTO.getNickname() != null) this.nickname = userDTO.getNickname();
+    }
 }

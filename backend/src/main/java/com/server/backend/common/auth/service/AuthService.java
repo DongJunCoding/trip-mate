@@ -12,13 +12,16 @@ import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -32,9 +35,22 @@ public class AuthService {
     private final UserTokenRepository userTokenRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    // 자체 로그인 회원가입 (존재 여부)
+    @Transactional(readOnly = true)
+    public Boolean existUser(UserDTO userDTO) {
+        log.info("## AuthService existUser");
+
+        return userRepository.existsById(userDTO.getUserId());
+    }
+    
+    // 자체 로그인 회원가입
     @Transactional
-    public void signUp(UserDTO userDTO) {
+    public ResponseEntity<?> signUp(UserDTO userDTO) {
         log.info("## AuthService signUp");
+
+        if(userRepository.existsById(userDTO.getUserId())) {
+            throw new IllegalArgumentException("존재하는 유저입니다.");
+        }
 
         userRepository.save(
                 UserEntity.builder()
@@ -48,7 +64,32 @@ public class AuthService {
                         .socialProviderType(SocialProviderType.LOCAL) // 임시
                         .build()
         );
+
+        return ResponseEntity.ok("Success Signup");
     }
+
+    // 자체 로그인
+
+    // 자체 로그인 회원 정보 수정
+    @Transactional
+    public ResponseEntity<?> updateUser(UserDTO userDTO) throws AccessDeniedException {
+        log.info("## AuthService updateUser");
+
+        // 본인만 수정 가능 검증
+        String sessionUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(!sessionUsername.equals(userDTO.getUserId())) {
+            throw new AccessDeniedException("본인 계정만 수정 가능");
+        }
+
+        UserEntity userEntity = userRepository.findByUserIdAndIsLockAndIsSocial(userDTO.getUserId(), false, false)
+                .orElseThrow(() -> new UsernameNotFoundException(userDTO.getUserId()));
+
+        // 여기서 회원정보 수정이 이루어짐
+        userEntity.updateUser(userDTO);
+
+        return ResponseEntity.ok().build();
+    }
+
 
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
         log.info("## AuthService reissue");

@@ -19,5 +19,4 @@ public class UserTokenEntity extends BaseEntity {
 
     private String userId;
     private String refreshToken;
-    private String expiration;
 }

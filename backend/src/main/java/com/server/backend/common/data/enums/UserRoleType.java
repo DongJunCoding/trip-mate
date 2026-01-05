@@ -5,6 +5,6 @@ import lombok.Getter;
 @Getter
 public enum UserRoleType {
 
-    ROLE_SYS,
-    ROLE_USER
+    SYS,
+    USER
 }

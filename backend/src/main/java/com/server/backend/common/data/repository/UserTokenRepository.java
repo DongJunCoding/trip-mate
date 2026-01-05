@@ -10,5 +10,5 @@ public interface UserTokenRepository extends JpaRepository<UserTokenEntity, Long
 
     void deleteByRefreshToken(String refresh);
 
-    void deleteByUsername(String username);
+    void deleteByUserId(String username);
 }

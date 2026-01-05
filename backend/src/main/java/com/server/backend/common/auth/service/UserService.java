@@ -38,7 +38,7 @@ public class UserService implements UserDetailsService {
     
     // 자체 로그인 회원가입
     @Transactional
-    public ResponseEntity<?> signUp(UserDTO userDTO) {
+    public void signUp(UserDTO userDTO) {
         log.info("## UserService signUp");
 
         if(userRepository.existsById(userDTO.getUserId())) {
@@ -50,15 +50,13 @@ public class UserService implements UserDetailsService {
                         .userId(userDTO.getUserId())
                         .userPw(bCryptPasswordEncoder.encode(userDTO.getUserPw()))
                         .userEmail(userDTO.getUserEmail())
-                        .userRole(UserRoleType.ROLE_USER)
+                        .userRole(UserRoleType.USER)
                         .nickname(userDTO.getNickname())
                         .isLock(false) // 임시
                         .isSocial(false) // 임시
                         .socialProviderType(SocialProviderType.LOCAL) // 임시
                         .build()
         );
-
-        return ResponseEntity.ok("Success Signup");
     }
 
     // 자체 로그인
@@ -73,7 +71,7 @@ public class UserService implements UserDetailsService {
         return User.builder()
                 .username(userEntity.getUserId())
                 .password(userEntity.getUserPw())
-                .roles(userEntity.getUserRole().name())
+                .roles(userEntity.getUserRole().name()) // .roles 하면 내부적으로 자동 ROLE_ 이 붙는다.
                 .accountLocked(userEntity.getIsLock())
                 .build();
     }

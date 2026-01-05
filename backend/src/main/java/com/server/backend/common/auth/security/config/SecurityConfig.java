@@ -5,6 +5,7 @@ import com.server.backend.common.auth.jwt.filter.JWTFilter;
 import com.server.backend.common.auth.jwt.filter.LoginFilter;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
 import com.server.backend.common.data.repository.UserTokenRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -70,14 +71,19 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/common/auth/reissue").permitAll()
                         .anyRequest().permitAll());
 
+        // 예외처리
         http
-                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .exceptionHandling(e -> e
+                                .authenticationEntryPoint((request, response, authException) -> {
+                                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED); // 로그인 하지 않은 상태로 접근시
+                })
+                                .accessDeniedHandler((request, response, authException) -> {
+                                    response.sendError(HttpServletResponse.SC_FORBIDDEN); // 로그인 하였지만 권한이 없을시
+                                })
+                );
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, userTokenRepository), UsernamePasswordAuthenticationFilter.class);
-
-        http
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil, userTokenRepository), LogoutFilter.class);
+                .addFilterBefore(new LoginFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -1,7 +1,7 @@
 package com.server.backend.common.auth.controller;
 
 import com.server.backend.common.auth.dto.UserDTO;
-import com.server.backend.common.auth.service.AuthService;
+import com.server.backend.common.auth.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,22 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/common/auth")
-public class AuthController {
+public class UserController {
 
-    private final AuthService authService;
+    private final UserService userService;
     private final AuthenticationManager authenticationManager;
 
     @PostMapping(value = "/signup")
     public ResponseEntity<?> signUp(@RequestBody UserDTO userDTO) {
-        log.info("## Auth Sign Up Controller");
+        log.info("## UserController signUp");
 
-        return authService.signUp(userDTO);
-    }
-
-    @PostMapping(value = "/reissue")
-    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-        log.info("## Auth Reissue");
-
-        return authService.reissue(request, response);
+        return userService.signUp(userDTO);
     }
 }

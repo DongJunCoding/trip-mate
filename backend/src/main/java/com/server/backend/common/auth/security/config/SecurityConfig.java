@@ -1,12 +1,11 @@
 package com.server.backend.common.auth.security.config;
 
-import com.server.backend.common.auth.jwt.filter.CustomLogoutFilter;
-import com.server.backend.common.auth.jwt.filter.JWTFilter;
 import com.server.backend.common.auth.jwt.filter.LoginFilter;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
 import com.server.backend.common.data.repository.UserTokenRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,20 +16,26 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final JWTUtil jwtUtil;
-    private final UserTokenRepository userTokenRepository;
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
+
+    public SecurityConfig(
+            AuthenticationConfiguration authenticationConfiguration,
+            @Qualifier("LoginSuccessHandler") AuthenticationSuccessHandler authenticationSuccessHandler
+    ) {
+        this.authenticationConfiguration = authenticationConfiguration;
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
+    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -83,7 +88,7 @@ public class SecurityConfig {
                 );
 
         http
-                .addFilterBefore(new LoginFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new LoginFilter(authenticationManager(authenticationConfiguration), authenticationSuccessHandler), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

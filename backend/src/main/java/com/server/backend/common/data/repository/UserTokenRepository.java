@@ -8,6 +8,7 @@ public interface UserTokenRepository extends JpaRepository<UserTokenEntity, Long
 
     Boolean existsByRefreshToken(String refresh);
 
-    @Transactional
     void deleteByRefreshToken(String refresh);
+
+    void deleteByUsername(String username);
 }

@@ -1,6 +1,9 @@
 package com.server.backend.common.auth.security.config;
 
+import com.server.backend.common.auth.api.service.JWTService;
+import com.server.backend.common.auth.hadler.RefreshTokenLogoutHandler;
 import com.server.backend.common.auth.jwt.filter.LoginFilter;
+import com.server.backend.common.auth.jwt.util.JWTUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -26,15 +29,21 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final AuthenticationSuccessHandler loginSuccessHandler;
     private final AuthenticationSuccessHandler socialSuccessHandler;
+    private final JWTService jwtService;
+    private final JWTUtil jwtUtil;
 
     public SecurityConfig(
             AuthenticationConfiguration authenticationConfiguration,
             @Qualifier("LoginSuccessHandler") AuthenticationSuccessHandler loginSuccessHandler,
-            @Qualifier("SocialSuccessHandler") AuthenticationSuccessHandler socialSuccessHandler
+            @Qualifier("SocialSuccessHandler") AuthenticationSuccessHandler socialSuccessHandler,
+            JWTService jwtService,
+            JWTUtil jwtUtil
     ) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.loginSuccessHandler = loginSuccessHandler;
         this.socialSuccessHandler = socialSuccessHandler;
+        this.jwtService = jwtService;
+        this.jwtUtil = jwtUtil;
     }
 
     @Bean
@@ -79,6 +88,11 @@ public class SecurityConfig {
         // 기본 Basic 인증 필터 disable
         http
                 .httpBasic(AbstractHttpConfigurer::disable);
+
+        // 기본 로그아웃 필터 + 커스텀 Refresh 토큰 삭제 핸들러 추가
+        http
+                .logout(logout -> logout
+                        .addLogoutHandler(new RefreshTokenLogoutHandler(jwtService, jwtUtil)));
 
         // OAuth2 인증용
         http

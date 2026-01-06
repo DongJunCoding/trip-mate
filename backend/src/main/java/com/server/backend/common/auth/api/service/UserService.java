@@ -2,6 +2,7 @@ package com.server.backend.common.auth.api.service;
 
 import com.server.backend.common.auth.dto.CustomOAuth2User;
 import com.server.backend.common.auth.dto.UserDTO;
+import com.server.backend.common.auth.dto.UserResponseDTO;
 import com.server.backend.common.data.entity.UserEntity;
 import com.server.backend.common.data.enums.SocialProviderType;
 import com.server.backend.common.data.enums.UserRoleType;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,6 +38,9 @@ public class UserService extends DefaultOAuth2UserService implements UserDetails
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JWTService jwtService;
+
+
 
     // 자체 로그인 회원가입 (존재 여부)
     @Transactional(readOnly = true)
@@ -44,7 +49,9 @@ public class UserService extends DefaultOAuth2UserService implements UserDetails
 
         return userRepository.existsById(userDTO.getUserId());
     }
-    
+
+
+
     // 자체 로그인 회원가입
     @Transactional
     public void signUp(UserDTO userDTO) {
@@ -69,6 +76,8 @@ public class UserService extends DefaultOAuth2UserService implements UserDetails
         );
     }
 
+
+
     // 자체 로그인
     @Transactional(readOnly = true)
     @Override
@@ -86,9 +95,11 @@ public class UserService extends DefaultOAuth2UserService implements UserDetails
                 .build();
     }
 
+
+
     // 자체 로그인 회원 정보 수정
     @Transactional
-    public ResponseEntity<?> updateUser(UserDTO userDTO) throws AccessDeniedException {
+    public void updateUser(UserDTO userDTO) throws AccessDeniedException {
         log.info("## UserService updateUser");
 
         // 본인만 수정 가능 검증
@@ -102,11 +113,35 @@ public class UserService extends DefaultOAuth2UserService implements UserDetails
 
         // 여기서 회원정보 수정이 이루어짐
         userEntity.updateUser(userDTO);
-
-        return ResponseEntity.ok().build();
     }
 
+
+
     // 자체/소셜 로그인 회원 탈퇴
+    @Transactional
+    public void deleteUser(UserDTO userDTO) throws AccessDeniedException {
+        log.info("## UserService deleteUser");
+
+        // 본인 및 어드민만 삭제 가능 검증
+        SecurityContext contextHolder = SecurityContextHolder.getContext();
+        String sessionUsername = contextHolder.getAuthentication().getName();
+        String sessionRole = contextHolder.getAuthentication().getAuthorities().iterator().next().toString();
+
+        boolean isOwner = sessionUsername.equals(userDTO.getUserId());
+        boolean isAdmin = sessionRole.equals("ROLE_" + UserRoleType.SYS.name());
+
+        if(!isOwner && !isAdmin) {
+            throw new AccessDeniedException("본인 혹인 관리자만 삭제할 수 있습니다.");
+        }
+
+        // 유저 제거
+        userRepository.deleteById(userDTO.getUserId());
+
+        // RefreshToken 제거
+        jwtService.removeRefreshUser(userDTO.getUserId());
+    }
+
+
 
     // 소셜 로그인 (로그인시: 신규 = 가입, 기존 = 업데이트)
     @Override
@@ -180,5 +215,18 @@ public class UserService extends DefaultOAuth2UserService implements UserDetails
         return new CustomOAuth2User(attributes, authorities, username);
     }
 
+
+
     // 자체/소셜 유저 정보 조회
+    @Transactional(readOnly = true)
+    public UserResponseDTO readUser() {
+        log.info("## UserService readUser");
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity userEntity = userRepository.findByUserIdAndIsLock(username, false)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾을 수 없습니다" + username));
+
+        return new UserResponseDTO(username, userEntity.getIsSocial(), userEntity.getNickname(), userEntity.getUserEmail());
+    }
 }

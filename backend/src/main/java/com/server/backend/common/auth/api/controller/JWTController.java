@@ -1,6 +1,6 @@
-package com.server.backend.common.auth.controller;
+package com.server.backend.common.auth.api.controller;
 
-import com.server.backend.common.auth.service.JWTService;
+import com.server.backend.common.auth.api.service.JWTService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.server.backend.common.auth.service;
+package com.server.backend.common.auth.api.service;
 
 import com.server.backend.common.data.entity.UserTokenEntity;
 import com.server.backend.common.data.repository.UserTokenRepository;

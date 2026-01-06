@@ -2,6 +2,7 @@ package com.server.backend.common.auth.security.config;
 
 import com.server.backend.common.auth.api.service.JWTService;
 import com.server.backend.common.auth.hadler.RefreshTokenLogoutHandler;
+import com.server.backend.common.auth.jwt.filter.JWTFilter;
 import com.server.backend.common.auth.jwt.filter.LoginFilter;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -118,6 +120,10 @@ public class SecurityConfig {
                                     response.sendError(HttpServletResponse.SC_FORBIDDEN); // 로그인 하였지만 권한이 없을시
                                 })
                 );
+
+        // 커스텀 필터 추가
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), LogoutFilter.class);
 
         http
                 .addFilterBefore(new LoginFilter(authenticationManager(authenticationConfiguration), loginSuccessHandler), UsernamePasswordAuthenticationFilter.class);

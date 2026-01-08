@@ -52,27 +52,6 @@ public class JWTUtil {
                 .get("role", String.class);
     }
 
-//    public String getCategory(String token) {
-//        return Jwts
-//                .parser()
-//                .verifyWith(secretKey)
-//                .build()
-//                .parseSignedClaims(token)
-//                .getPayload()
-//                .get("category", String.class);
-//    }
-//
-//    public Boolean isExpired(String token) {
-//        return Jwts
-//                .parser()
-//                .verifyWith(secretKey)
-//                .build()
-//                .parseSignedClaims(token)
-//                .getPayload()
-//                .getExpiration()
-//                .before(new Date());
-//    }
-
     // JWT 유효 여부(위조, 시간, Access/Refresh 여부)
     public Boolean isValid(String token, Boolean isAccess) {
         try{

@@ -5,10 +5,13 @@ import com.server.backend.common.auth.hadler.RefreshTokenLogoutHandler;
 import com.server.backend.common.auth.jwt.filter.JWTFilter;
 import com.server.backend.common.auth.jwt.filter.LoginFilter;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
+import com.server.backend.common.data.enums.UserRoleType;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,6 +26,8 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -59,12 +64,21 @@ public class SecurityConfig {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    public RoleHierarchy roleHierarchy() {
+        return RoleHierarchyImpl.withRolePrefix("ROLE_")
+                .role(UserRoleType.SYS.name()).implies(UserRoleType.USER.name())
+                .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("http://localhost:5173");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+        config.setExposedHeaders(List.of("Authorization", "Set-Cookie"));
+        config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -104,11 +118,23 @@ public class SecurityConfig {
         http
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+        // 인가
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/app/**").hasAnyRole("SYS", "USER")
                         .requestMatchers("/api/v1/common/auth/reissue").permitAll()
                         .anyRequest().permitAll());
+
+        // 인가
+//        http
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/jwt/exchange", "/jwt/refresh").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/user/exist", "/user").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/user").hasRole(UserRoleType.USER.name())
+//                        .requestMatchers(HttpMethod.PUT, "/user").hasRole(UserRoleType.USER.name())
+//                        .requestMatchers(HttpMethod.DELETE, "/user").hasRole(UserRoleType.USER.name())
+//                        .anyRequest().authenticated()
+//                );
 
         // 예외처리
         http

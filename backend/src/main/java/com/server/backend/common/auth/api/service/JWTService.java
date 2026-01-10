@@ -2,7 +2,6 @@ package com.server.backend.common.auth.api.service;
 
 import com.server.backend.common.auth.dto.JWTRefreshRequestDTO;
 import com.server.backend.common.auth.dto.JWTTokenDTO;
-import com.server.backend.common.auth.dto.UserTokenDTO;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
 import com.server.backend.common.data.entity.UserTokenEntity;
 import com.server.backend.common.data.repository.UserTokenRepository;

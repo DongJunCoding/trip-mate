@@ -1,11 +1,8 @@
 package com.server.backend.common.config;
 
 import com.server.backend.common.auth.api.service.JWTService;
-import com.server.backend.common.data.repository.UserTokenRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 @Component
 public class ScheduleConfig {

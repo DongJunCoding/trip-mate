@@ -13,5 +13,5 @@ public interface UserTokenRepository extends JpaRepository<UserTokenEntity, Long
 
     void deleteByUserId(String username);
 
-    void deleteByCreatedDateBefore(LocalDateTime createdDate);
+    void deleteByAddedDateBefore(LocalDateTime addedDate);
 }

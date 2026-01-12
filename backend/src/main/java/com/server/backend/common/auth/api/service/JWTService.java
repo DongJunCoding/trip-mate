@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -157,5 +159,14 @@ public class JWTService {
     @Transactional
     void removeRefreshUser(String username) {
         userTokenRepository.deleteByUserId(username);
+    }
+
+
+
+    // Refresh 토큰 저장소 8일 지난 토큰 삭제
+    @Transactional
+    public void refreshEntityTtlSchedule() {
+        LocalDateTime cutoff = LocalDateTime.now().minusDays(8);
+        userTokenRepository.deleteByAddedDateBefore(cutoff);
     }
 }

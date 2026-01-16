@@ -23,7 +23,7 @@ public class JWTService {
     private final JWTUtil jwtUtil;
     private final UserTokenRepository userTokenRepository;
 
-    // 소셜 로그인 성공 후 쿠키(Refresh -> 헤더 방식으로 응답
+    // 소셜 로그인 성공 후 쿠키(Refresh -> 헤더 방식으로 응답)
     @Transactional
     public JWTTokenDTO cookie2Header(HttpServletRequest request, HttpServletResponse response) {
         log.info("## JWTService cookie2Header");

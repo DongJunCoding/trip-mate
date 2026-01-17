@@ -13,6 +13,10 @@ function LoginPage() {
       });
 
       console.log("res: ", res);
+      if (res.status == 200) {
+        localStorage.setItem("accessToken", res.data.accessToken);
+        localStorage.setItem("refreshToken", res.data.refreshToken);
+      }
     } catch (error) {
       console.error(error);
     }

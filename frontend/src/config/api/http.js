@@ -62,7 +62,7 @@ instance.interceptors.response.use(
         console.error("error: ", error);
 
         clearTokens();
-        window.location.href = "/login";
+        // window.location.href = "/login";
         return Promise.reject(error);
       }
     }

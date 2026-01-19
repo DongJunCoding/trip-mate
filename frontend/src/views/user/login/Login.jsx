@@ -16,6 +16,7 @@ function LoginPage() {
       console.log("res: ", res);
       if (res.status == 200) {
         setTokens(res.data.accessToken, res.data.refreshToken);
+        window.location.href = "/home";
       }
     } catch (error) {
       console.error(error);

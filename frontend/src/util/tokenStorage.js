@@ -2,11 +2,11 @@ export const ACCESS_TOKEN = "accessToken";
 export const REFRESH_TOKEN = "refreshToken";
 
 export const getAccessToken = () => {
-  localStorage.getItem(ACCESS_TOKEN);
+  return localStorage.getItem(ACCESS_TOKEN);
 };
 
 export const getRefreshToken = () => {
-  localStorage.getItem(REFRESH_TOKEN);
+  return localStorage.getItem(REFRESH_TOKEN);
 };
 
 export const setTokens = (accessToken, refreshToken) => {

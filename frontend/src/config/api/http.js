@@ -12,7 +12,6 @@ const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL;
 const instance = axios.create({
   baseURL: BACKEND_API_BASE_URL,
   headers: {
-    Authorization: `Bearer ${getAccessToken()}`,
     "Content-Type": "application/json",
   },
 });

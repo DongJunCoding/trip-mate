@@ -24,7 +24,7 @@ import java.io.IOException;
 public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 
     private static final RequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER =
-            PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/login");
+            PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/api/login");
 
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
 

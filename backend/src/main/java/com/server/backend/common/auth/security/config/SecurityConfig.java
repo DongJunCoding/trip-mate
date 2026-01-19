@@ -108,6 +108,7 @@ public class SecurityConfig {
         // 기본 로그아웃 필터 + 커스텀 Refresh 토큰 삭제 핸들러 추가
         http
                 .logout(logout -> logout
+                        .logoutUrl("/api/logout")
                         .addLogoutHandler(new RefreshTokenLogoutHandler(jwtService, jwtUtil)));
 
         // OAuth2 인증용
@@ -122,7 +123,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/app/**").hasAnyRole("SYS", "USER")
-                        .requestMatchers("/api/v1/common/auth/reissue").permitAll()
+                        .requestMatchers("/api/v1/common/jwt/refresh").permitAll()
                         .anyRequest().permitAll());
 
         // 인가

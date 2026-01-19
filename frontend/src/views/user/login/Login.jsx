@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { setTokens } from "../../../util/tokenStorage";
 
 function LoginPage() {
   const [userId, setUserId] = useState("");
@@ -7,15 +8,14 @@ function LoginPage() {
 
   const loginApi = async () => {
     try {
-      const res = await axios.post("/login", {
+      const res = await axios.post("/api/login", {
         userId: userId,
         userPw: userPw,
       });
 
       console.log("res: ", res);
       if (res.status == 200) {
-        localStorage.setItem("accessToken", res.data.accessToken);
-        localStorage.setItem("refreshToken", res.data.refreshToken);
+        setTokens(res.data.accessToken, res.data.refreshToken);
       }
     } catch (error) {
       console.error(error);

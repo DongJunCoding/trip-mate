@@ -18,6 +18,7 @@ import java.io.IOException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Qualifier("SocialSuccessHandler")
 public class SocialSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JWTService jwtService;

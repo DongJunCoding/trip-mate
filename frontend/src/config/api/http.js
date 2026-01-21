@@ -2,7 +2,7 @@ import axios from "axios";
 import {
   clearTokens,
   getAccessToken,
-  getRefreshToken,
+  setAccessToken,
   setTokens,
 } from "../../util/tokenStorage";
 
@@ -40,7 +40,6 @@ instance.interceptors.response.use(
     console.error("error: ", error);
 
     const originalRequest = error.config; // error를 발생시킨 '그 요청의 설정 객체'를 다시 꺼내옴
-    const refreshToken = getRefreshToken();
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -48,11 +47,12 @@ instance.interceptors.response.use(
       try {
         const res = await axios.post(
           `${BACKEND_API_BASE_URL}/api/v1/common/jwt/refresh`,
-          { refreshToken: refreshToken },
+          {},
+          { withCredentials: true },
         );
 
-        const { accessToken, refreshToken: newRefresh } = res.data;
-        setTokens(accessToken, newRefresh); // 토큰 갱신
+        const { accessToken } = res.data;
+        setAccessToken(accessToken); // 토큰 갱신
 
         // 새 토큰으로 다시 요청
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;

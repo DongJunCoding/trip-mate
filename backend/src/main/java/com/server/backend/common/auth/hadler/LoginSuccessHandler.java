@@ -3,6 +3,7 @@ package com.server.backend.common.auth.hadler;
 import com.server.backend.common.auth.api.service.JWTService;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +43,16 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        String json = String.format("{\"accessToken\":\"%s\", \"refreshToken\":\"%s\"}", accessToken, refreshToken);
+//        String json = String.format("{\"accessToken\":\"%s\", \"refreshToken\":\"%s\"}", accessToken, refreshToken);
+        String json = String.format("{\"accessToken\":\"%s\"", accessToken);
+
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setMaxAge(60 * 60 * 24);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+
         response.getWriter().write(json);
         response.getWriter().flush();
+        response.addCookie(cookie);
     }
 }

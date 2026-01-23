@@ -43,6 +43,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
+        // TODO setPath설정 및 추가 설정 필요한지 확인
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setMaxAge(60 * 60 * 24);
         cookie.setSecure(false);

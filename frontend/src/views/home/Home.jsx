@@ -1,4 +1,5 @@
 import axios from "../../config/api/http";
+import { clearTokens } from "../../util/tokenStorage";
 import LoginPage from "../user/login/Login";
 
 function Home() {
@@ -16,7 +17,8 @@ function Home() {
       <h1 className="text-3xl font-bold">홈화면입니다.</h1>
       <p className="text-gray-500">화면 언제만드냐 진짜</p>
       <button onClick={testApi}>권한테스트 user api</button> <br />
-      <button onClick={testApi2}>권한테스트 sys api</button>
+      <button onClick={testApi2}>권한테스트 sys api</button> <br />
+      <button onClick={clearTokens}>토큰 지우기</button>
     </div>
   );
 }

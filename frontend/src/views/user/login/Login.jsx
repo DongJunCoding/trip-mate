@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { setTokens } from "../../../util/tokenStorage";
+import { setAccessToken } from "../../../util/tokenStorage";
 
 function LoginPage() {
   const [userId, setUserId] = useState("");
@@ -8,15 +8,19 @@ function LoginPage() {
 
   const loginApi = async () => {
     try {
-      const res = await axios.post("/api/login", {
-        userId: userId,
-        userPw: userPw,
-      });
+      const res = await axios.post(
+        "/api/login",
+        {
+          userId: userId,
+          userPw: userPw,
+        },
+        { withCredentials: true },
+      );
 
       console.log("res: ", res);
       if (res.status == 200) {
-        setTokens(res.data.accessToken, res.data.refreshToken);
-        window.location.href = "/home";
+        setAccessToken(res.data.accessToken);
+        // window.location.href = "/home";
       }
     } catch (error) {
       console.error(error);

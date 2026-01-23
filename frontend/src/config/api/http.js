@@ -3,7 +3,6 @@ import {
   clearTokens,
   getAccessToken,
   setAccessToken,
-  setTokens,
 } from "../../util/tokenStorage";
 
 // .env로 부터 받은 백엔드 URL 받아오기

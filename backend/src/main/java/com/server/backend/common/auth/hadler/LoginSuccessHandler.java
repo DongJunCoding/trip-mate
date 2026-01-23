@@ -43,16 +43,17 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-//        String json = String.format("{\"accessToken\":\"%s\", \"refreshToken\":\"%s\"}", accessToken, refreshToken);
-        String json = String.format("{\"accessToken\":\"%s\"", accessToken);
-
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setMaxAge(60 * 60 * 24);
+        cookie.setSecure(false);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
 
+        response.addCookie(cookie);
+
+//        String json = String.format("{\"accessToken\":\"%s\", \"refreshToken\":\"%s\"}", accessToken, refreshToken);
+        String json = String.format("{\"accessToken\":\"%s\"}", accessToken);
         response.getWriter().write(json);
         response.getWriter().flush();
-        response.addCookie(cookie);
     }
 }

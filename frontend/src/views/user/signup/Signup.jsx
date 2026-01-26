@@ -23,40 +23,53 @@ function SignupPage() {
     }
   };
 
+  const onChange = (e) => {
+    const { name, value } = e.target;
+
+    setUser({
+      ...user,
+      [name]: value,
+    });
+  };
+
   return (
     <div>
       <h1>회원가입 페이지</h1>
       <label>아이디</label> &nbsp;
       <input
+        name="userId"
         type="text"
         placeholder="아이디"
-        value={userId}
-        onChange={(e) => setUserId(e.target.value)}
+        value={user.userId}
+        onChange={onChange}
       />
       &nbsp; <br />
       <label>비밀번호</label> &nbsp;
       <input
+        name="userPw"
         type="text"
         placeholder="비밀번호"
-        value={userPw}
-        onChange={(e) => setUserPw(e.target.value)}
+        value={user.userPw}
+        onChange={onChange}
       />
       &nbsp; <br />
       <label>이메일</label> &nbsp;
       <input
+        name="userEmail"
         type="text"
         placeholder="이메일"
-        value={userEmail}
-        onChange={(e) => setUserEmail(e.target.value)}
+        value={user.userEmail}
+        onChange={onChange}
       />
       &nbsp; <br />
       <input type="hidden" value={"USER"} />
       <label>닉네임</label> &nbsp;
       <input
+        name="nickname"
         type="text"
         placeholder="닉네임"
-        value={nickname}
-        onChange={(e) => setNickname(e.target.value)}
+        value={user.nickname}
+        onChange={onChange}
       />
       &nbsp; <br />
     </div>
@@ -64,9 +77,3 @@ function SignupPage() {
 }
 
 export default SignupPage;
-
-// "userId": "test1",
-// "userPw": "zx1203",
-// "userEmail": "test@naver.com",
-// "userRole": "ROLE_USER",
-// "nickname": "테스트1"

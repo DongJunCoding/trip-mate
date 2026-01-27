@@ -1,10 +1,7 @@
-import { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import Layout from "./layout/index";
+import Router from "./config/router/router";
 
 function App() {
-  return <Layout />;
+  return <Router />;
 }
 
 export default App;

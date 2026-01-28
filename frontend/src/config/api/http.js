@@ -40,6 +40,10 @@ instance.interceptors.response.use(
 
     const originalRequest = error.config; // error를 발생시킨 '그 요청의 설정 객체'를 다시 꺼내옴
 
+    if (error.response?.status === 404) {
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 

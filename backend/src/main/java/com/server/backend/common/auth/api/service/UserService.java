@@ -68,9 +68,9 @@ public class UserService extends DefaultOAuth2UserService implements UserDetails
                         .userEmail(userDTO.getUserEmail())
                         .userRole(UserRoleType.USER)
                         .nickname(userDTO.getNickname())
-                        .isLock(false) // 임시
-                        .isSocial(false) // 임시
-                        .socialProviderType(SocialProviderType.LOCAL) // 임시
+                        .isLock(false)
+                        .isSocial(false)
+                        .socialProviderType(SocialProviderType.LOCAL) //TODO 확인 필요
                         .build()
         );
     }

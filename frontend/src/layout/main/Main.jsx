@@ -1,8 +1,12 @@
+import { Outlet } from "react-router-dom";
+
 function main() {
   return (
-    <>
-      <h1>Main</h1>
-    </>
+    <main>
+      <div>
+        <Outlet />
+      </div>
+    </main>
   );
 }
 

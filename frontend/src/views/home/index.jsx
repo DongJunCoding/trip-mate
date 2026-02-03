@@ -1,6 +1,5 @@
 import axios from "../../config/api/http";
 import { clearTokens } from "../../util/tokenStorage";
-import LoginPage from "../user/login/Login";
 
 function Home() {
   const testApi = async () => {

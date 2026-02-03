@@ -2,7 +2,7 @@ import Header from "./header/Header";
 import Main from "./main/Main";
 import Footer from "./footer/Footer";
 
-function index() {
+function Layout() {
   return (
     <>
       <Header />
@@ -12,4 +12,4 @@ function index() {
   );
 }
 
-export default index;
+export default Layout;

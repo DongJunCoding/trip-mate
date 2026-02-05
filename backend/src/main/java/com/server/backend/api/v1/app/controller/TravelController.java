@@ -16,14 +16,13 @@ public class TravelController {
     
     @GetMapping("/saveSchedule")
     public ResponseEntity<?> saveSchedule() {
-        log.info("## ItinerariesController saveSchedule");
+        log.info("## TravelController saveSchedule");
 
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping("/user")
     public void user() {
-        log.info("## User Controller");
-        log.info("user 유저");
+        log.info("## TravelController ");
     }
 }

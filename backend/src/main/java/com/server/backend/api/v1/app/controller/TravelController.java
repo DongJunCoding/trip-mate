@@ -2,6 +2,8 @@ package com.server.backend.api.v1.app.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,13 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/app/test")
-public class TestController {
+@RequestMapping("/api/v1/app/itineraries")
+public class TravelController {
     
-    @GetMapping("/sys")
-    public void sys() {
-        log.info("## sys Controller");
-        log.info("sys 관리자");
+    @GetMapping("/saveSchedule")
+    public ResponseEntity<?> saveSchedule() {
+        log.info("## ItinerariesController saveSchedule");
+
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping("/user")

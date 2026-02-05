@@ -1,5 +1,5 @@
+import { Link } from "react-router-dom";
 import axios from "../../config/api/http";
-import { clearTokens } from "../../util/tokenStorage";
 
 function Home() {
   const testApi = async () => {
@@ -11,13 +11,14 @@ function Home() {
     const res = await axios.get("/api/v1/app/test/sys");
     console.log("res", res);
   };
+
   return (
     <div>
       <h1 className="text-3xl font-bold">홈화면입니다.</h1>
-      <p className="text-gray-500">화면 언제만드냐 진짜</p>
+      <Link to="/login">로그인 화면 이동</Link> <br />
+      <Link to="/teamList">나의 여행 리스트 화면 이동</Link> <br />
       <button onClick={testApi}>권한테스트 user api</button> <br />
       <button onClick={testApi2}>권한테스트 sys api</button> <br />
-      <button onClick={clearTokens}>토큰 지우기</button>
     </div>
   );
 }

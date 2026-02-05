@@ -5,6 +5,7 @@ import SignupPage from "../../views/user/signup";
 import PageNotFound from "../../views/error/404Page";
 import Layout from "../../layout/index";
 import TeamList from "../../views/app/itineraries/list";
+import CreateSchedule from "../../views/app/itineraries/detail";
 
 const Router = () => {
   return (
@@ -15,6 +16,7 @@ const Router = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signUp" element={<SignupPage />} />
           <Route path="/teamList" element={<TeamList />} />
+          <Route path="/createSchedule" element={<CreateSchedule />} />
           <Route path="/*" element={<PageNotFound />} />
         </Route>
       </Routes>

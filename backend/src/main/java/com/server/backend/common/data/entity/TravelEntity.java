@@ -5,7 +5,7 @@ import com.server.backend.common.base.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "travel")
@@ -22,6 +22,6 @@ public class TravelEntity extends BaseEntity {
 
   private String teamName;
   private String destination;
-  private LocalDateTime startDate;
-  private LocalDateTime endDate;
+  private LocalDate startDate;
+  private LocalDate endDate;
 }

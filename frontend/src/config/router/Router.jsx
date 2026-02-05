@@ -4,8 +4,8 @@ import LoginPage from "../../views/user/login";
 import SignupPage from "../../views/user/signup";
 import PageNotFound from "../../views/error/404Page";
 import Layout from "../../layout/index";
-import TeamList from "../../views/app/itineraries/list";
-import CreateSchedule from "../../views/app/itineraries/detail";
+import TeamList from "../../views/app/travel/list";
+import CreateSchedule from "../../views/app/travel/detail";
 
 const Router = () => {
   return (

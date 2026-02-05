@@ -1,16 +1,6 @@
 import { useState } from "react";
 import axios from "../../../../config/api/http";
 
-function saveBtn() {
-  const saveApi = async () => {
-    try {
-      const res = await axios.post("/api/v1/app/travel/saveSchedule");
-    } catch (e) {
-      console.error(e);
-    }
-  };
-}
-
 function CreateSchedule() {
   const [values, setValues] = useState({
     startDate: "",
@@ -23,6 +13,21 @@ function CreateSchedule() {
     const { name, value } = e.target;
 
     setValues({ ...values, [name]: value });
+  };
+
+  const saveApi = async () => {
+    try {
+      const res = await axios.post(
+        "/api/v1/app/travel/saveSchedule",
+        {
+          ...values,
+        },
+        {},
+      );
+      console.log(res);
+    } catch (e) {
+      console.error(e);
+    }
   };
   return (
     <div className="container">
@@ -75,6 +80,15 @@ function CreateSchedule() {
             onChange={onChange}
             className="ml-5"
           />
+        </div>
+        <div className="flex flex-row mt-5">
+          <button
+            type="button"
+            className="border bg-orange-100"
+            onClick={saveApi}
+          >
+            저장버튼
+          </button>
         </div>
       </div>
     </div>

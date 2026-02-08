@@ -16,6 +16,7 @@ public class TravelController {
 
     private final TravelService travelService;
 
+    // 여행일정 저장
     @PostMapping("/saveSchedule")
     public ResponseEntity<?> saveSchedule(@RequestBody TravelDTO dto) {
         log.info("## TravelController saveSchedule");

@@ -1,10 +1,13 @@
 import { useState } from "react";
 import axios from "axios";
 import { setAccessToken } from "../../../util/tokenStorage";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
   const [userId, setUserId] = useState("");
   const [userPw, setUserPw] = useState("");
+
+  const navigate = useNavigate();
 
   const loginApi = async () => {
     try {
@@ -18,9 +21,11 @@ function LoginPage() {
       );
 
       console.log("res: ", res);
+
+      // 이전 페이지로 이동 설정 필요
       if (res.status == 200) {
         setAccessToken(res.data.accessToken);
-        // window.location.href = "/home";
+        navigate("/");
       }
     } catch (error) {
       console.error(error);

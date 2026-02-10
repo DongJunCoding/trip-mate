@@ -20,9 +20,16 @@ public class TravelController {
     @PostMapping("/saveSchedule")
     public ResponseEntity<?> saveSchedule(@RequestBody TravelDTO dto) {
         log.info("## TravelController saveSchedule");
-        log.info("TravelDTO={}", dto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(travelService.saveSchedule(dto));
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    // 여행일정 리스트
+    @PostMapping("/getTravelList")
+    public ResponseEntity<?> getTravelList(@RequestBody TravelDTO dto) {
+        log.info("## TravelController getTravelList");
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/user")

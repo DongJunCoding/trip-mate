@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -16,7 +18,7 @@ public class TravelService {
     private final TravelRepository travelRepository;
 
     @Transactional
-    public TravelEntity saveSchedule(TravelDTO dto) {
+    public void saveSchedule(TravelDTO dto) {
         log.info("## TravelService saveSchedule");
 
         TravelEntity travelEntity = TravelEntity.builder()
@@ -25,7 +27,10 @@ public class TravelService {
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
                 .build();
+    }
 
-        return travelRepository.save(travelEntity);
+    public List<TravelDTO> getTravelList(TravelDTO dto) {
+
+        return null;
     }
 }

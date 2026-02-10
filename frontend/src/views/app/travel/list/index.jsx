@@ -1,3 +1,4 @@
+import axios from "../../../../config/api/http";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -6,6 +7,24 @@ function TeamList() {
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  const [values, setValues] = useState({
+    teamName: "",
+    destination: "",
+    startDate: "",
+    endDate: "",
+  });
+
+  const res = async () => {
+    try {
+      const res = await axios.post("/api/v1/app/travel/getTravelList");
+      console.log(res);
+
+      setValues({ ...res.data });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <div className="container">

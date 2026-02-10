@@ -27,10 +27,13 @@ public class TravelService {
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
                 .build();
+
+        travelRepository.save(travelEntity);
     }
 
     public List<TravelDTO> getTravelList(TravelDTO dto) {
+        log.info("## TravelService getTravelList");
 
-        return null;
+        return travelRepository.selectTravelList();
     }
 }

@@ -21,6 +21,8 @@ public class TravelController {
     public ResponseEntity<?> saveSchedule(@RequestBody TravelDTO dto) {
         log.info("## TravelController saveSchedule");
 
+        travelService.saveSchedule(dto);
+
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -29,7 +31,7 @@ public class TravelController {
     public ResponseEntity<?> getTravelList(@RequestBody TravelDTO dto) {
         log.info("## TravelController getTravelList");
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(travelService.getTravelList(dto));
     }
 
     @GetMapping("/user")

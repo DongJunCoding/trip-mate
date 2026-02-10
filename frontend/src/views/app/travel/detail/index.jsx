@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "../../../../config/api/http";
+import { useNavigate } from "react-router-dom";
 
 function CreateSchedule() {
   const [values, setValues] = useState({
@@ -25,6 +26,10 @@ function CreateSchedule() {
         {},
       );
       console.log(res);
+
+      if (res.status == 200) {
+        navigate("/teamList");
+      }
     } catch (e) {
       console.error(e);
     }

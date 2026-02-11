@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "../../../../config/api/http";
 import { useNavigate } from "react-router-dom";
 
 function CreateSchedule() {
+  const navigate = useNavigate();
+
   const [values, setValues] = useState({
     startDate: "",
     endDate: "",
@@ -10,92 +12,256 @@ function CreateSchedule() {
     destination: "",
   });
 
+  // n일차 + 일정 구조
+  const [days, setDays] = useState([]);
+
+  /* =========================
+     기본 여행 정보 변경
+  ========================== */
   const onChange = (e) => {
     const { name, value } = e.target;
-
     setValues({ ...values, [name]: value });
   };
 
+  /* =========================
+     여행 기간 기준 자동 n일차 생성
+  ========================== */
+  useEffect(() => {
+    if (!values.startDate || !values.endDate) return;
+
+    const start = new Date(values.startDate);
+    const end = new Date(values.endDate);
+
+    if (start > end) return;
+
+    const tempDays = [];
+    let current = new Date(start);
+    let count = 1;
+
+    while (current <= end) {
+      tempDays.push({
+        dayNumber: count,
+        date: current.toISOString().split("T")[0],
+        schedules: [],
+      });
+
+      current.setDate(current.getDate() + 1);
+      count++;
+    }
+
+    setDays(tempDays);
+  }, [values.startDate, values.endDate]);
+
+  /* =========================
+     일정 추가
+  ========================== */
+  const addSchedule = (dayIndex) => {
+    const updated = [...days];
+
+    updated[dayIndex].schedules.push({
+      placeName: "",
+      address: "",
+      visitTime: "",
+      memo: "",
+    });
+
+    setDays(updated);
+  };
+
+  /* =========================
+     일정 삭제
+  ========================== */
+  const removeSchedule = (dayIndex, scheduleIndex) => {
+    const updated = [...days];
+    updated[dayIndex].schedules.splice(scheduleIndex, 1);
+    setDays(updated);
+  };
+
+  /* =========================
+     일차 삭제
+  ========================== */
+  const removeDay = (dayIndex) => {
+    const updated = days.filter((_, i) => i !== dayIndex);
+
+    // dayNumber 재정렬
+    const reordered = updated.map((day, index) => ({
+      ...day,
+      dayNumber: index + 1,
+    }));
+
+    setDays(reordered);
+  };
+
+  /* =========================
+     일정 값 변경
+  ========================== */
+  const onChangeSchedule = (dayIndex, scheduleIndex, e) => {
+    const { name, value } = e.target;
+
+    const updated = [...days];
+    updated[dayIndex].schedules[scheduleIndex][name] = value;
+
+    setDays(updated);
+  };
+
+  /* =========================
+     저장
+  ========================== */
   const saveApi = async () => {
     try {
-      const res = await axios.post(
-        "/api/v1/app/travel/saveSchedule",
-        {
-          ...values,
-        },
-        {},
-      );
-      console.log(res);
+      const res = await axios.post("/api/v1/app/travel/saveSchedule", {
+        ...values,
+        days,
+      });
 
-      if (res.status == 200) {
+      if (res.status === 200) {
         navigate("/teamList");
       }
     } catch (e) {
       console.error(e);
     }
   };
+
   return (
-    <div className="container">
-      <div className="flex flex-col">
-        <div className="flex flex-row">
-          <label htmlFor="startDate">여행 시작 날짜: </label>
-          <input
-            type="date"
-            name="startDate"
-            id="startDate"
-            value={values.startDate}
-            onChange={onChange}
-            className="ml-5"
-          />
+    <div className="container p-5">
+      <h2 className="text-xl font-bold mb-4">여행 일정 생성</h2>
 
-          <span className="ml-5 mr-5">~</span>
+      {/* =========================
+          기본 여행 정보
+      ========================== */}
 
-          <label htmlFor="endDate">여행 종료 날짜: </label>
-          <input
-            type="date"
-            name="endDate"
-            id="endDate"
-            value={values.endDate}
-            onChange={onChange}
-            className="ml-5"
-          />
-        </div>
+      <div className="mb-3">
+        <label>팀명: </label>
+        <input
+          type="text"
+          name="teamName"
+          value={values.teamName}
+          onChange={onChange}
+          className="border ml-2"
+        />
+      </div>
 
-        <div className="flex flex-row"></div>
+      <div className="mb-3">
+        <label>목적지: </label>
+        <input
+          type="text"
+          name="destination"
+          value={values.destination}
+          onChange={onChange}
+          className="border ml-2"
+        />
+      </div>
 
-        <div className="flex flex-row">
-          <label htmlFor="teamName">팀명: </label>
-          <input
-            type="text"
-            name="teamName"
-            id="teamName"
-            value={values.teamName}
-            onChange={onChange}
-            className="ml-5"
-          />
-        </div>
+      <div className="mb-5">
+        <label>여행 시작 날짜: </label>
+        <input
+          type="date"
+          name="startDate"
+          value={values.startDate}
+          onChange={onChange}
+          className="border ml-2"
+        />
 
-        <div className="flex flex-row">
-          <label htmlFor="destination">목적지: </label>
-          <input
-            type="text"
-            name="destination"
-            id="destination"
-            value={values.destination}
-            onChange={onChange}
-            className="ml-5"
-          />
-        </div>
-        <div className="flex flex-row mt-5">
+        <span className="mx-3">~</span>
+
+        <label>여행 종료 날짜: </label>
+        <input
+          type="date"
+          name="endDate"
+          value={values.endDate}
+          onChange={onChange}
+          className="border ml-2"
+        />
+      </div>
+
+      <hr />
+
+      {/* =========================
+          n일차 렌더링
+      ========================== */}
+
+      {days.map((day, dayIndex) => (
+        <div key={dayIndex} className="border p-4 mt-6">
+          <div className="flex justify-between items-center">
+            <h3 className="font-bold">
+              {day.dayNumber}일차 ({day.date})
+            </h3>
+
+            <button
+              onClick={() => removeDay(dayIndex)}
+              className="text-red-500"
+            >
+              일차 삭제
+            </button>
+          </div>
+
+          {/* 일정 목록 */}
+          {day.schedules.map((schedule, scheduleIndex) => (
+            <div key={scheduleIndex} className="border p-3 mt-3">
+              <div>
+                <label>장소명: </label>
+                <input
+                  type="text"
+                  name="placeName"
+                  value={schedule.placeName}
+                  onChange={(e) => onChangeSchedule(dayIndex, scheduleIndex, e)}
+                  className="border ml-2"
+                />
+              </div>
+
+              <div className="mt-2">
+                <label>주소: </label>
+                <input
+                  type="text"
+                  name="address"
+                  value={schedule.address}
+                  onChange={(e) => onChangeSchedule(dayIndex, scheduleIndex, e)}
+                  className="border ml-2"
+                />
+              </div>
+
+              <div className="mt-2">
+                <label>방문 시간: </label>
+                <input
+                  type="time"
+                  name="visitTime"
+                  value={schedule.visitTime}
+                  onChange={(e) => onChangeSchedule(dayIndex, scheduleIndex, e)}
+                  className="border ml-2"
+                />
+              </div>
+
+              <div className="mt-2">
+                <label>메모: </label>
+                <textarea
+                  name="memo"
+                  value={schedule.memo}
+                  onChange={(e) => onChangeSchedule(dayIndex, scheduleIndex, e)}
+                  className="border ml-2"
+                />
+              </div>
+
+              <button
+                onClick={() => removeSchedule(dayIndex, scheduleIndex)}
+                className="text-red-500 mt-2"
+              >
+                일정 삭제
+              </button>
+            </div>
+          ))}
+
           <button
-            type="button"
-            className="border bg-orange-100"
-            onClick={saveApi}
+            onClick={() => addSchedule(dayIndex)}
+            className="mt-3 bg-gray-200 px-2 py-1"
           >
-            저장버튼
+            + 일정 추가
           </button>
         </div>
-      </div>
+      ))}
+
+      <button onClick={saveApi} className="mt-8 bg-orange-300 px-4 py-2">
+        저장
+      </button>
     </div>
   );
 }

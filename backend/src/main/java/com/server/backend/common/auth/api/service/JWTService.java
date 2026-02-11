@@ -1,6 +1,5 @@
 package com.server.backend.common.auth.api.service;
 
-import com.server.backend.common.auth.dto.JWTRefreshRequestDTO;
 import com.server.backend.common.auth.dto.JWTTokenDTO;
 import com.server.backend.common.auth.jwt.util.JWTUtil;
 import com.server.backend.common.data.entity.UserTokenEntity;
@@ -86,10 +85,10 @@ public class JWTService {
 
     // Refresh 토큰으로 Access 토큰 재발급 로직 (Rotate 포함)
     @Transactional
-    public JWTTokenDTO refreshRotate(JWTRefreshRequestDTO jwtRefreshRequestDTO) {
+    public JWTTokenDTO refreshRotate(String token) {
         log.info("## JWTService refreshRotate");
 
-        String refreshToken = jwtRefreshRequestDTO.getRefreshToken();
+        String refreshToken = token;
 
         // RefreshToken 검증
         Boolean isValid = jwtUtil.isValid(refreshToken, false);

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class CustomControllerAdvice {
 
+    //TODO 예외처리 커스컴 설정 필요
 //    @ExceptionHandler(AccessDeniedException.class)
 //    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
 //        return ResponseEntity

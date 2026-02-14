@@ -30,7 +30,7 @@ public class JWTController {
 
     // Refresh 토큰으로 Access 토큰 재발급 (Rotate 포함)
     @PostMapping(value = "/refresh", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public JWTTokenDTO refresh(HttpServletRequest request) {
+    public JWTTokenDTO refresh(HttpServletRequest request, HttpServletResponse response) {
         log.info("## JWTController refresh");
 
         String refreshToken = null;
@@ -41,6 +41,16 @@ public class JWTController {
             }
         }
 
-        return jwtService.refreshRotate(refreshToken);
+        JWTTokenDTO jwtTokenDTO = jwtService.refreshRotate(refreshToken);
+
+        Cookie newCookie = new Cookie("refreshToken", jwtTokenDTO.refreshToken());
+        newCookie.setHttpOnly(true);
+        newCookie.setSecure(false); // 배포 시 true
+        newCookie.setPath("/");
+        newCookie.setMaxAge(60 * 60 * 24);
+
+        response.addCookie(newCookie);
+
+        return jwtTokenDTO;
     }
 }

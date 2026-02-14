@@ -18,7 +18,7 @@ import lombok.*;
 public class TravelGroupEntity extends BaseEntity {
 
   @Id
-  private Long id;
+  private Long travelId;
 
   @Id
   private String userId;

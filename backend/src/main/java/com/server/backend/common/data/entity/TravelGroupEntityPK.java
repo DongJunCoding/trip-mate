@@ -14,6 +14,6 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @Data
 public class TravelGroupEntityPK implements Serializable {
-    private Long id;
+    private Long travelId;
     private String userId;
 }

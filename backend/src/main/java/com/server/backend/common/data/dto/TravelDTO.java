@@ -3,6 +3,7 @@ package com.server.backend.common.data.dto;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -15,4 +16,6 @@ public class TravelDTO {
     private String destination;
     private LocalDate startDate;
     private LocalDate endDate;
+
+    private List<TravelDayDTO> days;
 }

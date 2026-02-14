@@ -29,10 +29,13 @@ function CreateSchedule() {
   useEffect(() => {
     if (!values.startDate || !values.endDate) return;
 
+    if (values.startDate > values.endDate) {
+      alert("날짜를 다시 선택해주세요.");
+      values.startDate = "";
+      values.endDate = "";
+    }
     const start = new Date(values.startDate);
     const end = new Date(values.endDate);
-
-    if (start > end) return;
 
     const tempDays = [];
     let current = new Date(start);
@@ -40,8 +43,8 @@ function CreateSchedule() {
 
     while (current <= end) {
       tempDays.push({
-        dayNumber: count,
-        date: current.toISOString().split("T")[0],
+        dayNum: count,
+        scheduleDate: current.toISOString().split("T")[0],
         schedules: [],
       });
 
@@ -59,7 +62,7 @@ function CreateSchedule() {
     const updated = [...days];
 
     updated[dayIndex].schedules.push({
-      placeName: "",
+      place: "",
       address: "",
       visitTime: "",
       memo: "",
@@ -83,13 +86,13 @@ function CreateSchedule() {
   const removeDay = (dayIndex) => {
     const updated = days.filter((_, i) => i !== dayIndex);
 
-    // dayNumber 재정렬
-    const reordered = updated.map((day, index) => ({
-      ...day,
-      dayNumber: index + 1,
-    }));
+    // dayNum 재정렬
+    // const reordered = updated.map((day, index) => ({
+    //   ...day,
+    //   dayNum: index + 1,
+    // }));
 
-    setDays(reordered);
+    setDays(updated);
   };
 
   /* =========================
@@ -184,7 +187,7 @@ function CreateSchedule() {
         <div key={dayIndex} className="border p-4 mt-6">
           <div className="flex justify-between items-center">
             <h3 className="font-bold">
-              {day.dayNumber}일차 ({day.date})
+              {day.dayNum}일차 ({day.scheduleDate})
             </h3>
 
             <button
@@ -202,8 +205,8 @@ function CreateSchedule() {
                 <label>장소명: </label>
                 <input
                   type="text"
-                  name="placeName"
-                  value={schedule.placeName}
+                  name="place"
+                  value={schedule.place}
                   onChange={(e) => onChangeSchedule(dayIndex, scheduleIndex, e)}
                   className="border ml-2"
                 />

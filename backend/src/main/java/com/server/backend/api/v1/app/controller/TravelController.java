@@ -2,6 +2,7 @@ package com.server.backend.api.v1.app.controller;
 
 import com.server.backend.api.v1.app.service.TravelService;
 import com.server.backend.common.data.dto.TravelDTO;
+import com.server.backend.common.data.dto.TravelScheduleDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

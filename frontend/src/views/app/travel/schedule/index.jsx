@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "../../../../config/api/http";
+import axios from "@/config/api/http";
 import { useNavigate } from "react-router-dom";
 
 function CreateSchedule() {
@@ -27,8 +27,17 @@ function CreateSchedule() {
      여행 기간 기준 자동 n일차 생성
   ========================== */
   useEffect(() => {
-    if (!values.startDate || !values.endDate) return;
+    const getToday = () => {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
 
+    const today = getToday();
+
+    if (!values.startDate || !values.endDate) return;
     if (values.startDate > values.endDate) {
       alert("날짜를 다시 선택해주세요.");
       values.startDate = "";

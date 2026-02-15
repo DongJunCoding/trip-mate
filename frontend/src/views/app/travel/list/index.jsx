@@ -1,4 +1,4 @@
-import axios from "../../../../config/api/http";
+import axios from "@/config/api/http";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 

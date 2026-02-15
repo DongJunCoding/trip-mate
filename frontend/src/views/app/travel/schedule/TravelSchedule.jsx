@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "@/config/api/http";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function CreateSchedule() {
   const navigate = useNavigate();
+
+  const { id } = useParams();
 
   const [values, setValues] = useState({
     startDate: "",
@@ -23,10 +25,16 @@ function CreateSchedule() {
     setValues({ ...values, [name]: value });
   };
 
+  useEffect(() => {
+    console.log("useEffect id");
+  });
+
   /* =========================
      여행 기간 기준 자동 n일차 생성
   ========================== */
   useEffect(() => {
+    console.log("useEffect today");
+
     const getToday = () => {
       const date = new Date();
       const year = date.getFullYear();

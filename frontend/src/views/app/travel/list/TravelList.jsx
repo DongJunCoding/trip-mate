@@ -1,6 +1,6 @@
 import axios from "@/config/api/http";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 function TeamList() {
   const [values, setValues] = useState([]);
@@ -24,7 +24,7 @@ function TeamList() {
     <div className="container">
       <div className="flex flex-col">
         <div className="flex flex-row mb-5">
-          <Link to="/createSchedule">일정추가</Link>
+          <Link to="/schedule/create">일정추가</Link>
         </div>
         {values.map((item) => (
           <div key={item.id}>
@@ -48,6 +48,9 @@ function TeamList() {
               <input value={item.endDate} readOnly={true} />
             </div>
 
+            <Link to={`/schedule/${item.id}`}>
+              <button className="mt-8 bg-orange-300 px-4 py-2">보기</button>
+            </Link>
             <hr />
           </div>
         ))}

@@ -67,4 +67,10 @@ public class TravelService {
 
         return travelRepository.selectTravelList();
     }
+
+    public TravelDTO getTravelSchedule(TravelDTO dto) {
+        log.info("## TravelService getTravelSchedule");
+
+        return null;
+    }
 }

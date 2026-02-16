@@ -1,9 +1,11 @@
 package com.server.backend.common.data.repository.impl;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.server.backend.common.data.dto.TravelDTO;
 import com.server.backend.common.data.entity.QTravelEntity;
+import com.server.backend.common.data.entity.QTravelScheduleEntity;
 import com.server.backend.common.data.repository.custom.TravelRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 
@@ -29,5 +31,18 @@ public class TravelRepositoryImpl implements TravelRepositoryCustom {
                         ))
                 .from(travel)
                 .fetch();
+    }
+
+    @Override
+    public TravelDTO selectSchedule(TravelDTO dto) {
+
+        QTravelScheduleEntity schedule = QTravelScheduleEntity.travelScheduleEntity;
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if(dto.getId() != null) {
+            builder.and(schedule.id.eq(dto.getId()));
+        }
+        return null;
     }
 }

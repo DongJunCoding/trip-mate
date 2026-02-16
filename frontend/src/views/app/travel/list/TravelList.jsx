@@ -2,7 +2,7 @@ import axios from "@/config/api/http";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-function TeamList() {
+function TravelList() {
   const [values, setValues] = useState([]);
 
   const listApi = async () => {
@@ -59,4 +59,4 @@ function TeamList() {
   );
 }
 
-export default TeamList;
+export default TravelList;

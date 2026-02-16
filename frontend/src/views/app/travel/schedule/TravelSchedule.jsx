@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import axios from "@/config/api/http";
 import { useNavigate, useParams } from "react-router-dom";
 
-function CreateSchedule() {
+function Schedule() {
   const navigate = useNavigate();
 
   const { id } = useParams();
+  const isEditMode = !!id;
 
   const [values, setValues] = useState({
     startDate: "",
@@ -24,10 +25,6 @@ function CreateSchedule() {
     const { name, value } = e.target;
     setValues({ ...values, [name]: value });
   };
-
-  useEffect(() => {
-    console.log("useEffect id");
-  });
 
   /* =========================
      여행 기간 기준 자동 n일차 생성
@@ -158,6 +155,7 @@ function CreateSchedule() {
           value={values.teamName}
           onChange={onChange}
           className="border ml-2"
+          disabled={isEditMode}
         />
       </div>
 
@@ -169,6 +167,7 @@ function CreateSchedule() {
           value={values.destination}
           onChange={onChange}
           className="border ml-2"
+          disabled={isEditMode}
         />
       </div>
 
@@ -180,6 +179,7 @@ function CreateSchedule() {
           value={values.startDate}
           onChange={onChange}
           className="border ml-2"
+          disabled={isEditMode}
         />
 
         <span className="mx-3">~</span>
@@ -191,6 +191,7 @@ function CreateSchedule() {
           value={values.endDate}
           onChange={onChange}
           className="border ml-2"
+          disabled={isEditMode}
         />
       </div>
 
@@ -226,6 +227,7 @@ function CreateSchedule() {
                   value={schedule.place}
                   onChange={(e) => onChangeSchedule(dayIndex, scheduleIndex, e)}
                   className="border ml-2"
+                  disabled={isEditMode}
                 />
               </div>
 
@@ -237,6 +239,7 @@ function CreateSchedule() {
                   value={schedule.address}
                   onChange={(e) => onChangeSchedule(dayIndex, scheduleIndex, e)}
                   className="border ml-2"
+                  disabled={isEditMode}
                 />
               </div>
 
@@ -248,6 +251,7 @@ function CreateSchedule() {
                   value={schedule.visitTime}
                   onChange={(e) => onChangeSchedule(dayIndex, scheduleIndex, e)}
                   className="border ml-2"
+                  disabled={isEditMode}
                 />
               </div>
 
@@ -258,6 +262,7 @@ function CreateSchedule() {
                   value={schedule.memo}
                   onChange={(e) => onChangeSchedule(dayIndex, scheduleIndex, e)}
                   className="border ml-2"
+                  disabled={isEditMode}
                 />
               </div>
 
@@ -286,4 +291,4 @@ function CreateSchedule() {
   );
 }
 
-export default CreateSchedule;
+export default Schedule;

@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @ToString
 public class TravelDTO {
-    private Long id;
+    private Long travelId;
     private String teamName;
     private String destination;
     private LocalDate startDate;

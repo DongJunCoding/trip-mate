@@ -44,7 +44,7 @@ public class TravelService {
 
             for(TravelScheduleDTO schedule : schedules) {
                 TravelScheduleEntity travelScheduleEntity = TravelScheduleEntity.builder()
-                        .travelId(travelEntity.getId())
+                        .travelId(travelEntity.getTravelId())
                         .dayNum(day.getDayNum())
                         .scheduleDate(day.getScheduleDate())
                         .place(schedule.getPlace())

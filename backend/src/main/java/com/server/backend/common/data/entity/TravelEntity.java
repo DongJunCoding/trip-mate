@@ -18,7 +18,7 @@ public class TravelEntity extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private Long travelId;
 
   private String teamName;
   private String destination;

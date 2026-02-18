@@ -23,7 +23,7 @@ public class TravelRepositoryImpl implements TravelRepositoryCustom {
         return queryFactory
                 .select(
                         Projections.bean(TravelDTO.class,
-                                travel.id,
+                                travel.travelId,
                                 travel.teamName,
                                 travel.destination,
                                 travel.startDate,
@@ -40,9 +40,10 @@ public class TravelRepositoryImpl implements TravelRepositoryCustom {
 
         BooleanBuilder builder = new BooleanBuilder();
 
-        if(dto.getId() != null) {
-            builder.and(schedule.id.eq(dto.getId()));
+        if(dto.getTravelId() != null) {
+            builder.and(schedule.travelId.eq(dto.getTravelId()));
         }
+
         return null;
     }
 }

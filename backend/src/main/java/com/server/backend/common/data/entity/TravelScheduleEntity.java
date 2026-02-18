@@ -20,7 +20,7 @@ import java.time.LocalTime;
 public class TravelScheduleEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long scheduleId;
 
     private Long travelId;
     private Long dayNum;

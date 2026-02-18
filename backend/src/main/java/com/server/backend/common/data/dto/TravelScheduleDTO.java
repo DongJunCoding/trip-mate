@@ -12,7 +12,7 @@ import java.time.LocalTime;
 @ToString
 public class TravelScheduleDTO {
 
-    private Long id;
+    private Long scheduleId;
     private String place;
     private String address;
     private String lat;

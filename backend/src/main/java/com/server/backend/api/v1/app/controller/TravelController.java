@@ -1,12 +1,15 @@
 package com.server.backend.api.v1.app.controller;
 
 import com.server.backend.api.v1.app.service.TravelService;
+import com.server.backend.common.auth.security.util.SecurityUtil;
 import com.server.backend.common.data.dto.TravelDTO;
 import com.server.backend.common.data.dto.TravelScheduleDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -31,6 +34,14 @@ public class TravelController {
     @PostMapping("/getTravelList")
     public ResponseEntity<?> getTravelList(@RequestBody TravelDTO dto) {
         log.info("## TravelController getTravelList");
+
+        String userId = SecurityUtil.getUserId();
+
+        if(userId == null) {
+            throw new NullPointerException("아이디가 없습니다.");
+        }
+
+        dto.setUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(travelService.getTravelList(dto));
     }

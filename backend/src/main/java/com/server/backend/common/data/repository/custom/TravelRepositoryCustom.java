@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TravelRepositoryCustom {
 
-    List<TravelDTO> selectTravelList();
+    List<TravelDTO> selectTravelList(TravelDTO dto);
 
     TravelDTO selectSchedule(TravelDTO id);
 }

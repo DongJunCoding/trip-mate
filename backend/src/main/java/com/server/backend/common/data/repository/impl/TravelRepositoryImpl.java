@@ -5,6 +5,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.server.backend.common.data.dto.TravelDTO;
 import com.server.backend.common.data.entity.QTravelEntity;
+import com.server.backend.common.data.entity.QTravelGroupEntity;
 import com.server.backend.common.data.entity.QTravelScheduleEntity;
 import com.server.backend.common.data.repository.custom.TravelRepositoryCustom;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,15 @@ public class TravelRepositoryImpl implements TravelRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<TravelDTO> selectTravelList() {
+    public List<TravelDTO> selectTravelList(TravelDTO dto) {
         QTravelEntity travel = QTravelEntity.travelEntity;
+        QTravelGroupEntity group = QTravelGroupEntity.travelGroupEntity;
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if(dto.getUserId() != null && !dto.getUserId().isBlank()) {
+            builder.and(group.userId.eq(dto.getUserId()));
+        }
 
         return queryFactory
                 .select(
@@ -29,7 +37,10 @@ public class TravelRepositoryImpl implements TravelRepositoryCustom {
                                 travel.startDate,
                                 travel.endDate
                         ))
-                .from(travel)
+                .from(group)
+                .leftJoin(travel)
+                .on(group.travelId.eq(travel.travelId))
+                .where(builder)
                 .fetch();
     }
 

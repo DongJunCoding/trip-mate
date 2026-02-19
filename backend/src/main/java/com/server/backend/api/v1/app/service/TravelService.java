@@ -65,7 +65,7 @@ public class TravelService {
     public List<TravelDTO> getTravelList(TravelDTO dto) {
         log.info("## TravelService getTravelList");
 
-        return travelRepository.selectTravelList();
+        return travelRepository.selectTravelList(dto);
     }
 
     public TravelDTO getTravelSchedule(TravelDTO dto) {

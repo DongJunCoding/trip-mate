@@ -27,7 +27,7 @@ function TravelList() {
           <Link to="/schedule/create">일정추가</Link>
         </div>
         {values.map((item) => (
-          <div key={item.id}>
+          <div key={item.travelId}>
             <div className="flex flex-row">
               <label htmlFor="teamName">팀명: </label>
               <input value={item.teamName} id="teamName" readOnly />
@@ -48,7 +48,7 @@ function TravelList() {
               <input value={item.endDate} readOnly={true} />
             </div>
 
-            <Link to={`/schedule/${item.id}`}>
+            <Link to={`/schedule/${item.travelId}`}>
               <button className="mt-8 bg-orange-300 px-4 py-2">보기</button>
             </Link>
             <hr />

@@ -32,6 +32,22 @@ function Schedule() {
   useEffect(() => {
     console.log("useEffect today");
 
+    const getTravelSchedule = async () => {
+      try {
+        const res = await axios.post(
+          "/api/v1/app/travel/getTravelSchedule",
+          { travelId: id },
+          {},
+        );
+
+        console.log("getSchedule res : ", res);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    getTravelSchedule();
+
     const getToday = () => {
       const date = new Date();
       const year = date.getFullYear();
@@ -126,7 +142,7 @@ function Schedule() {
   ========================== */
   const saveApi = async () => {
     try {
-      const res = await axios.post("/api/v1/app/travel/saveSchedule", {
+      const res = await axios.post("/api/v1/app/travel/saveTravel", {
         ...values,
         days,
       });

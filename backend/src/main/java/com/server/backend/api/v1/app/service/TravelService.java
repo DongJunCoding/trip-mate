@@ -24,8 +24,8 @@ public class TravelService {
     private final TravelScheduleRepository travelScheduleRepository;
 
     @Transactional
-    public void saveSchedule(TravelDTO dto) {
-        log.info("## TravelService saveSchedule");
+    public void saveTravel(TravelDTO dto) {
+        log.info("## TravelService saveTravel");
 
         TravelEntity travelEntity = TravelEntity.builder()
                 .teamName(dto.getTeamName())
@@ -62,15 +62,15 @@ public class TravelService {
         travelScheduleRepository.saveAll(travelScheduleEntityList);
     }
 
-    public List<TravelDTO> getTravelList(TravelDTO dto) {
+    public List<TravelDTO> getTravelList(TravelDTO dto, String userId) {
         log.info("## TravelService getTravelList");
 
-        return travelRepository.selectTravelList(dto);
+        return travelRepository.getTravelList(dto, userId);
     }
 
-    public TravelDTO getTravelSchedule(TravelDTO dto) {
+    public TravelDTO getTravelSchedule(TravelDTO dto, String userId) {
         log.info("## TravelService getTravelSchedule");
 
-        return null;
+        return travelRepository.getTravelSchedule(dto, userId);
     }
 }

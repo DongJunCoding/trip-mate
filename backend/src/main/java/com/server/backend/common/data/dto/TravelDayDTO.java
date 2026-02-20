@@ -13,7 +13,7 @@ import java.util.List;
 public class TravelDayDTO {
 
     private Long dayNum;
-    private LocalDate  scheduleDate;
+    private LocalDate scheduleDate;
 
     private List<TravelScheduleDTO> schedules;
 }

@@ -71,7 +71,6 @@ public class TravelRepositoryImpl implements TravelRepositoryCustom {
                 .where(travel.travelId.eq(dto.getTravelId()))
                 .fetchOne();
 
-
         List<TravelDayDTO> daysDTO = queryFactory
                 .select(Projections.bean(TravelDayDTO.class,
                         schedule.dayNum,
@@ -80,8 +79,8 @@ public class TravelRepositoryImpl implements TravelRepositoryCustom {
                 .distinct()
                 .from(schedule)
                 .where(builder)
+                .orderBy(schedule.dayNum.asc())
                 .fetch();
-
 
         for(TravelDayDTO dayDTO : daysDTO) {
 
@@ -103,12 +102,8 @@ public class TravelRepositoryImpl implements TravelRepositoryCustom {
             dayDTO.setSchedules(scheduleDTO);
         }
 
-
-
         assert travelDTO != null;
         travelDTO.setDays(daysDTO);
-
-
 
         return travelDTO;
     }

@@ -49,16 +49,12 @@ public class TravelRepositoryImpl implements TravelRepositoryCustom {
 
     @Override
     public TravelDTO getTravelSchedule(TravelDTO dto, String userId) {
-
         QTravelEntity travel = QTravelEntity.travelEntity;
         QTravelScheduleEntity schedule = QTravelScheduleEntity.travelScheduleEntity;
 
-        BooleanBuilder builder = new BooleanBuilder();
+        Long travelId = dto.getTravelId();
 
-        if(dto.getTravelId() != null) {
-            builder.and(schedule.travelId.eq(dto.getTravelId()));
-        }
-
+        // 1. 여행 기본 정보
         TravelDTO travelDTO = queryFactory
                 .select(Projections.bean(TravelDTO.class,
                         travel.travelId,
@@ -68,23 +64,28 @@ public class TravelRepositoryImpl implements TravelRepositoryCustom {
                         travel.endDate
                 ))
                 .from(travel)
-                .where(travel.travelId.eq(dto.getTravelId()))
+                .where(travel.travelId.eq(travelId))
                 .fetchOne();
 
+        if (travelDTO == null) {
+            throw new RuntimeException("해당 여행 정보가 없습니다. travelId=" + travelId);
+        }
+
+        // 2. 일차 목록 (distinct dayNum, scheduleDate)
         List<TravelDayDTO> daysDTO = queryFactory
                 .select(Projections.bean(TravelDayDTO.class,
                         schedule.dayNum,
                         schedule.scheduleDate
-                        ))
+                ))
                 .distinct()
                 .from(schedule)
-                .where(builder)
+                .where(schedule.travelId.eq(travelId))
                 .orderBy(schedule.dayNum.asc())
                 .fetch();
 
-        for(TravelDayDTO dayDTO : daysDTO) {
-
-            List<TravelScheduleDTO> scheduleDTO = queryFactory
+        // 3. 각 일차별 세부 일정
+        for (TravelDayDTO dayDTO : daysDTO) {
+            List<TravelScheduleDTO> schedules = queryFactory
                     .select(Projections.bean(TravelScheduleDTO.class,
                             schedule.scheduleId,
                             schedule.place,
@@ -95,16 +96,17 @@ public class TravelRepositoryImpl implements TravelRepositoryCustom {
                             schedule.memo
                     ))
                     .from(schedule)
-                    .where(builder, schedule.dayNum.eq(dayDTO.getDayNum()))
-                    .orderBy(schedule.dayNum.asc(), schedule.visitTime.asc())
+                    .where(
+                            schedule.travelId.eq(travelId),
+                            schedule.dayNum.eq(dayDTO.getDayNum())
+                    )
+                    .orderBy(schedule.visitTime.asc().nullsLast()) // null 처리
                     .fetch();
 
-            dayDTO.setSchedules(scheduleDTO);
+            dayDTO.setSchedules(schedules);
         }
 
-        assert travelDTO != null;
         travelDTO.setDays(daysDTO);
-
         return travelDTO;
     }
 }

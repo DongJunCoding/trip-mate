@@ -6,7 +6,11 @@ function Schedule() {
   const navigate = useNavigate();
 
   const { id } = useParams();
-  const isEditMode = !!id;
+  const [editMode, setEditMode] = useState(!id); // id 없으면 처음부터 입력 가능 (신규모드: true, 조회: false)
+
+  const onClickEdit = () => {
+    setEditMode(true);
+  };
 
   const [values, setValues] = useState({
     startDate: "",
@@ -29,44 +33,52 @@ function Schedule() {
   /* =========================
      여행 기간 기준 자동 n일차 생성
   ========================== */
+  // 편집모드: API에서 데이터 불러오기
   useEffect(() => {
-    console.log("useEffect today");
+    if (editMode) return; // 편집모드가 아니면 실행 안함
 
     const getTravelSchedule = async () => {
       try {
-        const res = await axios.post(
-          "/api/v1/app/travel/getTravelSchedule",
-          { travelId: id },
-          {},
-        );
+        const res = await axios.post("/api/v1/app/travel/getTravelSchedule", {
+          travelId: id,
+        });
 
-        console.log("getSchedule res : ", res);
+        const data = res.data; // { travelId, teamName, destination, startDate, endDate, days: [...] }
+        console.log("getSchedule res : ", data);
+
+        // 기본 여행 정보 세팅
+        setValues({
+          startDate: data.startDate,
+          endDate: data.endDate,
+          teamName: data.teamName,
+          destination: data.destination,
+        });
+
+        // days 세팅 (백엔드 구조와 동일)
+        // days: [ { dayNum, scheduleDate, schedules: [ { scheduleId, place, address, lat, lng, visitTime, memo } ] } ]
+        setDays(data.days);
       } catch (e) {
         console.error(e);
       }
     };
 
     getTravelSchedule();
+  }, [id]); // id가 바뀔 때만 실행
 
-    const getToday = () => {
-      const date = new Date();
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    };
-
-    const today = getToday();
+  // 신규모드: 날짜 기반 days 자동 생성
+  useEffect(() => {
+    if (!editMode) return; // 편집모드면 실행 안함
 
     if (!values.startDate || !values.endDate) return;
+
     if (values.startDate > values.endDate) {
       alert("날짜를 다시 선택해주세요.");
-      values.startDate = "";
-      values.endDate = "";
+      setValues((prev) => ({ ...prev, startDate: "", endDate: "" }));
+      return;
     }
+
     const start = new Date(values.startDate);
     const end = new Date(values.endDate);
-
     const tempDays = [];
     let current = new Date(start);
     let count = 1;
@@ -77,7 +89,6 @@ function Schedule() {
         scheduleDate: current.toISOString().split("T")[0],
         schedules: [],
       });
-
       current.setDate(current.getDate() + 1);
       count++;
     }
@@ -155,6 +166,8 @@ function Schedule() {
     }
   };
 
+  const updateApi = () => {};
+
   return (
     <div className="container p-5">
       <h2 className="text-xl font-bold mb-4">여행 일정 생성</h2>
@@ -171,7 +184,7 @@ function Schedule() {
           value={values.teamName}
           onChange={onChange}
           className="border ml-2"
-          disabled={isEditMode}
+          disabled={!editMode}
         />
       </div>
 
@@ -183,7 +196,7 @@ function Schedule() {
           value={values.destination}
           onChange={onChange}
           className="border ml-2"
-          disabled={isEditMode}
+          disabled={!editMode}
         />
       </div>
 
@@ -195,7 +208,7 @@ function Schedule() {
           value={values.startDate}
           onChange={onChange}
           className="border ml-2"
-          disabled={isEditMode}
+          disabled={!editMode}
         />
 
         <span className="mx-3">~</span>
@@ -207,7 +220,7 @@ function Schedule() {
           value={values.endDate}
           onChange={onChange}
           className="border ml-2"
-          disabled={isEditMode}
+          disabled={!editMode}
         />
       </div>
 
@@ -243,7 +256,7 @@ function Schedule() {
                   value={schedule.place}
                   onChange={(e) => onChangeSchedule(dayIndex, scheduleIndex, e)}
                   className="border ml-2"
-                  disabled={isEditMode}
+                  disabled={!editMode}
                 />
               </div>
 
@@ -255,7 +268,7 @@ function Schedule() {
                   value={schedule.address}
                   onChange={(e) => onChangeSchedule(dayIndex, scheduleIndex, e)}
                   className="border ml-2"
-                  disabled={isEditMode}
+                  disabled={!editMode}
                 />
               </div>
 
@@ -267,7 +280,7 @@ function Schedule() {
                   value={schedule.visitTime}
                   onChange={(e) => onChangeSchedule(dayIndex, scheduleIndex, e)}
                   className="border ml-2"
-                  disabled={isEditMode}
+                  disabled={!editMode}
                 />
               </div>
 
@@ -278,7 +291,7 @@ function Schedule() {
                   value={schedule.memo}
                   onChange={(e) => onChangeSchedule(dayIndex, scheduleIndex, e)}
                   className="border ml-2"
-                  disabled={isEditMode}
+                  disabled={!editMode}
                 />
               </div>
 
@@ -300,9 +313,43 @@ function Schedule() {
         </div>
       ))}
 
-      <button onClick={saveApi} className="mt-8 bg-orange-300 px-4 py-2">
-        저장
-      </button>
+      {/* 저장 버튼: 신규모드일 때만 */}
+      {!id && (
+        <button onClick={saveApi} className="mt-8 bg-orange-300 px-4 py-2">
+          저장
+        </button>
+      )}
+
+      {/* 수정 관련 버튼: id 있을 때만 */}
+      {id && (
+        <>
+          {!editMode ? (
+            // 조회 중 → 수정모드로 전환
+            <button
+              onClick={onClickEdit}
+              className="mt-8 bg-blue-300 px-4 py-2"
+            >
+              수정
+            </button>
+          ) : (
+            // 수정 중 → 저장 or 취소
+            <>
+              <button
+                onClick={saveApi}
+                className="mt-8 bg-green-400 px-4 py-2 mr-2"
+              >
+                수정 저장
+              </button>
+              <button
+                onClick={() => setEditMode(false)}
+                className="mt-8 bg-gray-300 px-4 py-2"
+              >
+                취소
+              </button>
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 }

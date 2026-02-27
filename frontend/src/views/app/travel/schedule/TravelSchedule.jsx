@@ -8,6 +8,8 @@ function Schedule() {
   const { id } = useParams();
   const [editMode, setEditMode] = useState(!id); // id 없으면 처음부터 입력 가능 (신규모드: true, 조회: false)
 
+  console.log("id: ", id);
+  console.log("editMode: ", editMode);
   const onClickEdit = () => {
     setEditMode(true);
   };
@@ -154,19 +156,18 @@ function Schedule() {
   const saveApi = async () => {
     try {
       const res = await axios.post("/api/v1/app/travel/saveTravel", {
+        travelId: id || null, // 수정이면 id, 신규면 null
         ...values,
         days,
       });
 
       if (res.status === 200) {
-        navigate("/teamList");
+        navigate("/travelList");
       }
     } catch (e) {
       console.error(e);
     }
   };
-
-  const updateApi = () => {};
 
   return (
     <div className="container p-5">
@@ -236,13 +237,16 @@ function Schedule() {
             <h3 className="font-bold">
               {day.dayNum}일차 ({day.scheduleDate})
             </h3>
-
-            <button
-              onClick={() => removeDay(dayIndex)}
-              className="text-red-500"
-            >
-              일차 삭제
-            </button>
+            {editMode && (
+              <>
+                <button
+                  onClick={() => removeDay(dayIndex)}
+                  className="text-red-500"
+                >
+                  일차 삭제
+                </button>
+              </>
+            )}
           </div>
 
           {/* 일정 목록 */}
@@ -294,22 +298,26 @@ function Schedule() {
                   disabled={!editMode}
                 />
               </div>
-
-              <button
-                onClick={() => removeSchedule(dayIndex, scheduleIndex)}
-                className="text-red-500 mt-2"
-              >
-                일정 삭제
-              </button>
+              {editMode && (
+                <>
+                  <button
+                    onClick={() => removeSchedule(dayIndex, scheduleIndex)}
+                    className="text-red-500 mt-2"
+                  >
+                    일정 삭제
+                  </button>
+                </>
+              )}
             </div>
           ))}
-
-          <button
-            onClick={() => addSchedule(dayIndex)}
-            className="mt-3 bg-gray-200 px-2 py-1"
-          >
-            + 일정 추가
-          </button>
+          {editMode && (
+            <button
+              onClick={() => addSchedule(dayIndex)}
+              className="mt-3 bg-gray-200 px-2 py-1"
+            >
+              + 일정 추가
+            </button>
+          )}
         </div>
       ))}
 

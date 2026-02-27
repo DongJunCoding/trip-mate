@@ -27,35 +27,77 @@ public class TravelService {
     public void saveTravel(TravelDTO dto) {
         log.info("## TravelService saveTravel");
 
-        TravelEntity travelEntity = TravelEntity.builder()
-                .teamName(dto.getTeamName())
-                .destination(dto.getDestination())
-                .startDate(dto.getStartDate())
-                .endDate(dto.getEndDate())
-                .build();
+        TravelEntity travelEntity;
 
-        travelRepository.save(travelEntity);
+        if (dto.getTravelId() == null) {
+            // 신규
+            travelEntity = TravelEntity.builder()
+                    .teamName(dto.getTeamName())
+                    .destination(dto.getDestination())
+                    .startDate(dto.getStartDate())
+                    .endDate(dto.getEndDate())
+                    .build();
+            travelRepository.save(travelEntity);
+        } else {
+            // 수정
+            travelEntity = travelRepository.findById(dto.getTravelId())
+                    .orElseThrow(() -> new RuntimeException("Travel not found"));
+            travelEntity.setTeamName(dto.getTeamName());
+            travelEntity.setDestination(dto.getDestination());
+            travelEntity.setStartDate(dto.getStartDate());
+            travelEntity.setEndDate(dto.getEndDate());
 
+            // dto에 없는 스케줄 삭제
+            List<Long> dtoScheduleIds = dto.getDays().stream()
+                    .flatMap(day -> day.getSchedules().stream())
+                    .map(TravelScheduleDTO::getScheduleId)
+                    .filter(id -> id != null)
+                    .toList();
+
+            List<TravelScheduleEntity> existingSchedules = travelScheduleRepository.findByTravelId(travelEntity.getTravelId());
+            List<TravelScheduleEntity> toDelete = existingSchedules.stream()
+                    .filter(s -> !dtoScheduleIds.contains(s.getScheduleId()))
+                    .toList();
+
+            travelScheduleRepository.deleteAll(toDelete);
+        }
+
+        // 스케줄 저장
         List<TravelScheduleEntity> travelScheduleEntityList = new ArrayList<>();
-        List<TravelDayDTO> days = dto.getDays();
 
-        for(TravelDayDTO day: days) {
-            List<TravelScheduleDTO> schedules = day.getSchedules();
+        for (TravelDayDTO day : dto.getDays()) {
+            for (TravelScheduleDTO schedule : day.getSchedules()) {
 
-            for(TravelScheduleDTO schedule : schedules) {
-                TravelScheduleEntity travelScheduleEntity = TravelScheduleEntity.builder()
-                        .travelId(travelEntity.getTravelId())
-                        .dayNum(day.getDayNum())
-                        .scheduleDate(day.getScheduleDate())
-                        .place(schedule.getPlace())
-                        .address(schedule.getAddress())
-                        .lat("")
-                        .lng("")
-                        .visitTime(schedule.getVisitTime())
-                        .memo(schedule.getMemo())
-                        .build();
+                TravelScheduleEntity scheduleEntity;
 
-                travelScheduleEntityList.add(travelScheduleEntity);
+                if (schedule.getScheduleId() == null) {
+                    // 신규 스케줄
+                    scheduleEntity = TravelScheduleEntity.builder()
+                            .travelId(travelEntity.getTravelId())
+                            .dayNum(day.getDayNum())
+                            .scheduleDate(day.getScheduleDate())
+                            .place(schedule.getPlace())
+                            .address(schedule.getAddress())
+                            .lat(schedule.getLat())
+                            .lng(schedule.getLng())
+                            .visitTime(schedule.getVisitTime())
+                            .memo(schedule.getMemo())
+                            .build();
+                } else {
+                    // 기존 스케줄 수정
+                    scheduleEntity = travelScheduleRepository.findById(schedule.getScheduleId())
+                            .orElseThrow(() -> new RuntimeException("Schedule not found"));
+                    scheduleEntity.setDayNum(day.getDayNum());
+                    scheduleEntity.setScheduleDate(day.getScheduleDate());
+                    scheduleEntity.setPlace(schedule.getPlace());
+                    scheduleEntity.setAddress(schedule.getAddress());
+                    scheduleEntity.setLat(schedule.getLat());
+                    scheduleEntity.setLng(schedule.getLng());
+                    scheduleEntity.setVisitTime(schedule.getVisitTime());
+                    scheduleEntity.setMemo(schedule.getMemo());
+                }
+
+                travelScheduleEntityList.add(scheduleEntity);
             }
         }
 
